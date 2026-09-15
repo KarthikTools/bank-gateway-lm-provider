@@ -51,7 +51,7 @@ If the org restricts extensions with an allowlist (`extensions.allowed` policy),
 ```jsonc
 {
   "bankGateway.baseUrl":   "https://<gateway-host>",              // no trailing slash
-  "bankGateway.chatPath":  "/v1/chat/completion",                  // exactly as the gateway documents it
+  "bankGateway.chatPath":  "/v1/chat/completions",                 // plural; the singular form is rejected with 400 "Unknown endpoint"
   "bankGateway.tokenUrl":  "https://<sso-host>/as/token.oauth2",   // PingFederate client-credentials endpoint
   "bankGateway.clientId":  "<client-id>",
   "bankGateway.tokenAuth": "basic",                                // PingFederate usually wants HTTP Basic (curl -u id:secret)

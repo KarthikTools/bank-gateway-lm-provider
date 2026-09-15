@@ -58,7 +58,7 @@
         "bankGateway.chatPath": {
           "type": "string",
           "default": "/chat/completions",
-          "description": "Path appended to baseUrl for chat completions, e.g. /v1/chat/completions or /v1/chat/completion (use exactly what the gateway documents)."
+          "description": "Path appended to baseUrl for chat completions, e.g. /v1/chat/completions (plural; put /v1 in either baseUrl or here, not both)."
         },
         "bankGateway.tokenUrl": {
           "type": "string",
