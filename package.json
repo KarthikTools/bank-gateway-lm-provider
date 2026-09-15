@@ -1,0 +1,200 @@
+{
+  "name": "bank-gateway-lm-provider",
+  "displayName": "Bank AI Gateway (Claude) for Copilot Chat",
+  "description": "Registers Claude models served by the bank's internal API gateway (OAuth2 client-credentials, OpenAI-compatible chat completions) as language models in Copilot Chat, including agent mode.",
+  "version": "0.0.1",
+  "publisher": "your-bank",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "AI",
+    "Chat"
+  ],
+  "activationEvents": [
+    "onLanguageModelChat:bank-gateway"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languageModelChatProviders": [
+      {
+        "vendor": "bank-gateway",
+        "displayName": "Bank AI Gateway",
+        "managementCommand": "bankGateway.manage"
+      }
+    ],
+    "commands": [
+      {
+        "command": "bankGateway.manage",
+        "title": "Bank AI Gateway: Manage"
+      },
+      {
+        "command": "bankGateway.setClientSecret",
+        "title": "Bank AI Gateway: Set OAuth Client Secret"
+      },
+      {
+        "command": "bankGateway.setApiKey",
+        "title": "Bank AI Gateway: Set Gateway API Key (optional header)"
+      },
+      {
+        "command": "bankGateway.clearSecrets",
+        "title": "Bank AI Gateway: Clear Stored Secrets"
+      },
+      {
+        "command": "bankGateway.testConnection",
+        "title": "Bank AI Gateway: Test Connection"
+      }
+    ],
+    "configuration": {
+      "title": "Bank AI Gateway",
+      "properties": {
+        "bankGateway.baseUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Gateway base URL, e.g. https://<gateway-host>. Chat requests are POSTed to <baseUrl><chatPath>."
+        },
+        "bankGateway.chatPath": {
+          "type": "string",
+          "default": "/chat/completions",
+          "description": "Path appended to baseUrl for chat completions, e.g. /v1/chat/completions or /v1/chat/completion (use exactly what the gateway documents)."
+        },
+        "bankGateway.tokenUrl": {
+          "type": "string",
+          "default": "",
+          "description": "OAuth2 token endpoint used for the client-credentials grant, e.g. https://<sso-host>/as/token.oauth2 (PingFederate) or https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token (Entra ID)."
+        },
+        "bankGateway.clientId": {
+          "type": "string",
+          "default": "",
+          "description": "OAuth2 client id. The client secret is NOT a setting: run 'Bank AI Gateway: Set OAuth Client Secret' (stored in the OS keychain via VS Code SecretStorage)."
+        },
+        "bankGateway.tokenAuth": {
+          "type": "string",
+          "enum": [
+            "body",
+            "basic"
+          ],
+          "enumDescriptions": [
+            "client_secret_post: send client_id and client_secret as form fields (Entra ID default).",
+            "client_secret_basic: send them as an HTTP Basic Authorization header, like `curl -u id:secret` (PingFederate /as/token.oauth2, Apigee, Kong)."
+          ],
+          "default": "body",
+          "description": "How the client id and secret are presented to the token endpoint. If the token call returns 401 with one method, try the other."
+        },
+        "bankGateway.scope": {
+          "type": "string",
+          "default": "",
+          "description": "OAuth2 'scope' form parameter. Entra ID: api://<gateway-app-id>/.default. PingFederate: whatever scope the gateway team issued for the client (often required). Leave empty if not needed."
+        },
+        "bankGateway.resource": {
+          "type": "string",
+          "default": "",
+          "description": "OAuth2 'resource' form parameter (Entra ID v1-style endpoints). Usually empty."
+        },
+        "bankGateway.apiKeyHeader": {
+          "type": "string",
+          "default": "",
+          "description": "Optional header name for a gateway subscription key (e.g. Ocp-Apim-Subscription-Key). The value is stored as a secret via 'Bank AI Gateway: Set Gateway API Key'."
+        },
+        "bankGateway.extraHeaders": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Non-secret headers added to every gateway request."
+        },
+        "bankGateway.stream": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use SSE streaming. Set to false if the gateway does not stream; responses then arrive in one piece."
+        },
+        "bankGateway.sendMaxTokens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Send max_tokens = model.maxOutputTokens on every request (Anthropic-backed gateways often require it)."
+        },
+        "bankGateway.debugLogBodies": {
+          "type": "boolean",
+          "default": false,
+          "description": "Log full request/response bodies (prompts included) to the 'Bank AI Gateway' output channel. Local only; keep off unless debugging."
+        },
+        "bankGateway.models": {
+          "type": "array",
+          "description": "Models exposed in the Copilot Chat model picker.",
+          "default": [
+            {
+              "id": "claude-sonnet-4-6",
+              "name": "Claude Sonnet 4.6 (Bank Gateway)",
+              "family": "claude",
+              "maxInputTokens": 200000,
+              "maxOutputTokens": 16000,
+              "toolCalling": true,
+              "imageInput": false
+            }
+          ],
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "maxInputTokens",
+              "maxOutputTokens"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Model id shown to VS Code (must be unique within this provider)."
+              },
+              "gatewayModel": {
+                "type": "string",
+                "description": "Value sent as 'model' to the gateway, if different from id."
+              },
+              "name": {
+                "type": "string"
+              },
+              "family": {
+                "type": "string",
+                "default": "claude"
+              },
+              "version": {
+                "type": "string",
+                "default": "1.0.0"
+              },
+              "maxInputTokens": {
+                "type": "number"
+              },
+              "maxOutputTokens": {
+                "type": "number"
+              },
+              "toolCalling": {
+                "type": "boolean",
+                "default": true,
+                "description": "Must be true for agent mode."
+              },
+              "imageInput": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "typecheck": "tsc -p ./ --noEmit",
+    "package": "vsce package",
+    "test": "npm run compile && node test/e2e.js ."
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.105.0",
+    "@vscode/vsce": "^3.3.0",
+    "typescript": "^5.5.0"
+  }
+}
