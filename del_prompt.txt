@@ -1,0 +1,19 @@
+You are helping me prepare to explain this project end-to-end in a senior engineering interview. Work only from the code, configs, tests, pipeline files and commit history in this repo. Do not invent anything; if something is unclear, say "unclear from code".
+
+Give me:
+
+1. ONE-LINE PURPOSE: what business problem this system solves, in plain words.
+
+2. ARCHITECTURE: every component/service, what it does, and how a single request flows end-to-end (entry point → each file/function touched → external calls → response). Name the actual files.
+
+3. THE FIVE KEY DESIGN DECISIONS: for each, what was chosen, what the obvious alternative was, and the likely reason for the choice (infer from code/comments/commits; mark inferences).
+
+4. HARD PROBLEMS: from commit history, TODOs, error handling, retries, config changes and tests, list the issues that were clearly hit during development (e.g. env/namespace conflicts, schema failures, latency, token cost, flaky outputs). For each: symptom → root cause → fix in the code.
+
+5. RELIABILITY & EVALUATION: what testing, validation, monitoring, logging, versioning and failure handling exist today. Then list what is MISSING for a regulated production system.
+
+6. NUMBERS: any latency, volume, cost, test counts or performance figures visible in code, configs or comments.
+
+7. INTERVIEW FOLLOW-UPS: the 10 hardest questions a senior interviewer would ask about this codebase, each with a 2-3 sentence answer grounded in the code.
+
+Keep each section tight. Use plain English, no marketing language.
